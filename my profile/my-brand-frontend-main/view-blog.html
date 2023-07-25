@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../CSS/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300&display=swap" rel="stylesheet" />
+  <title>Dashboard</title>
+</head>
+
+<body>
+  <section class="header">
+    <div class="container">
+      <div class="row-noChange">
+        <div class="log">
+          <a href="dashboard.html">
+            <h1>Viateur Dev</h1>
+          </a>
+        </div>
+        <div class="side">
+          <div class="user" id="userDiv">
+            Admin
+            <span>
+              <img src="./images/ant-design_caret-down-filled.png" alt="" />
+            </span>
+            <div class="user-profile">
+              <h4>
+                <a href="#" id="logoutBtn"> logout</a>
+              </h4>
+            </div>
+          </div>
+          <div class="mobile-nav">
+            <img src="./bx_menu.png" alt="" id="showMenu" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-menu">
+      <a href="./dashboard.html" onclick="showMenu()">
+        <div class="menu-item">Dashboard</div>
+      </a>
+
+      <a href="./new-blog.html" onclick="showMenu()">
+        <div class="menu-item">New Blog</div>
+      </a>
+
+      <a href="#" onclick="showMenu()">
+        <div class="menu-item">View Blog</div>
+      </a>
+    </div>
+    </div>
+  </section>
+  <section class="body">
+    <div class="row-start">
+      <div class="menu">
+        <a href="dashboard.html">
+          <div class="menu-item">
+            <img src="" alt="" /> Dashboard
+          </div>
+        </a>
+        <hr />
+        <a href="./new-blog.html">
+          <div class="menu-item">
+            <img src="" alt="" /> New Blog
+          </div>
+        </a>
+        <hr />
+        <a href="#">
+          <div class="menu-item">
+            <img src="" alt="" /> View Blog
+          </div>
+        </a>
+        <hr />
+      </div>
+      <div class="content">
+        <h1>View Blogs</h1>
+        <hr />
+        <div 
+        <div class="article-form" >
+          <table border="1">
+            <i class="fas fa-download"></i>
+            <!-- <thead>
+              <tr>
+                <th>Blog Title  </th>
+                <th>Options</th>
+              </tr>
+            </thead>
+            <tbody id="articles">
+
+            </tbody> -->
+            <div id="result">
+
+            </div>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.3.3/dist/axios.min.js"></script>
+  <script>
+    const getArticles = () => {
+      let articles=[]
+      let articlesContainer = document.getElementById("result")
+      axios.get('https://my-brand-production-1062.up.railway.app/api/blog/')
+  .then(response => {
+    console.log(response.data);
+    articles=response.data
+    let data = ''
+        articles.forEach(element => {
+            data += `<div class="blogItem">
+                <p><img src="${element.imageUrl}"
+                    style="width:200px;height:230px;border-radius: 2rem 2rem 0 0;margin-top:2rem;"></p>
+                            <p class="card-title">
+                                ${element.title}</p>
+                                <p class="card-text"> ${element.body}</p>
+                                <p style="text-align:center;margin-bottom:1rem;"></p>
+                              <a href='./new-blog.html' onclick="updatePost('${element._id}','${element.title}','${element.body}')">  <img src="./IMAGES/kindpng_1541177.png" style=" height: 40px;width: 40px;"></a>
+                            <img id ="img" src="./IMAGES/delete.png" style=" height: 40px;width: 40px;" onclick="deletePost('${element._id}')">
+
+                            </h2>
+                            </div>
+                        `
+        });
+        articlesContainer.innerHTML = data
+  })
+  .catch(error => {
+    console.log(error);
+  });
+        }
+        getArticles()
+
+
+
+  
+
+        const deletePost=(id)=>{
+          const user = JSON.parse(localStorage.getItem("tempLog"))
+          var myHeaders = new Headers();
+myHeaders.append("Authorization", `Bearer ${user.token}`);
+
+var requestOptions = {
+  method: 'DELETE',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+fetch(`https://my-brand-production-1062.up.railway.app/api/blog/${id}`, requestOptions)
+  .then(response => response.text())
+  .then(result =>  location.reload())
+ 
+  .catch(error => console.log('error', error));  
+        }
+
+        const updatePost=(id,title,body)=>{
+          const artcle={
+            id,
+            title,
+            body
+          }
+          localStorage.setItem('updateArticle',JSON.stringify(artcle))
+        }
+
+        localStorage.removeItem("updateArticle");
+    </script>
+
+
+  <!-- <script src="./"></script> -->
+  <!-- <script src="./newblog.js"></script> -->
+
+</body>
+</html>

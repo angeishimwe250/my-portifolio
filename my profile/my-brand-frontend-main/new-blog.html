@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300&display=swap" rel="stylesheet" /> -->
+    <title>Dashboard</title>
+  </head>
+
+  <body>
+    <section class="header">
+      <div class="container">
+        <div class="row-noChange">
+          <div class="log">
+            <a href="index.html">
+              <h1>Ntwali Dev</h1>
+            </a>
+          </div>
+          <div class="side">
+            <div class="user" id="userDiv">
+              Admin
+              <span>
+                <!-- <img src="./images/ant-design_caret-down-filled.png" alt="" /> -->
+              </span>
+              <div class="user-profile">
+                <h4>
+                  <a href="#" id="logoutBtn"> logout</a>
+                </h4>
+              </div>
+            </div>
+            <div class="mobile-nav">
+              <img src="./bx_menu.png" alt="" id="showMenu" />
+            </div>
+          </div>
+        </div>
+        <div class="mobile-menu">
+          <a href="dashboard.html" onclick="showMenu()">
+            <div class="menu-item">Dashboard</div>
+          </a>
+
+          <a href="#" onclick="showMenu()">
+            <div class="menu-item">New Blog</div>
+          </a>
+
+          <a href="./view-blog.html" onclick="showMenu()">
+            <div class="menu-item">View Blog</div>
+          </a>
+        </div>
+      </div>
+    </section>
+    <section class="body">
+      <div class="row-start">
+        <div class="menu">
+          <a href="dashboard.html">
+            <div class="menu-item"><img src="" alt="" /> Dashboard</div>
+          </a>
+          <hr />
+          <a href="#">
+            <div class="menu-item"><img src="" alt="" /> New Blog</div>
+          </a>
+          <hr />
+          <a href="./view-blog.html">
+            <div class="menu-item"><img src="" alt="" /> View Blog</div>
+          </a>
+          <hr />
+        </div>
+        <div class="content">
+          <h1>Adding New Blog</h1>
+          <hr />
+          <div class="article-form">
+            <form
+              enctype="multipart/form-data"
+              id="newArticles"
+              onsubmit="return submitss()"
+            >
+              <div>
+                <h4>Blog Title</h4>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  placeholder="  Blog Title"
+                />
+              </div>
+              <div id="cover">
+                <h4>Cover Image</h4>
+                <input type="file" id="photo" name="image" />
+              </div>
+              <div>
+                <h4>Body</h4>
+                <textarea
+                  type="text"
+                  placeholder="body Title"
+                  rows="5"
+                  id="body"
+                  name="body"
+                ></textarea>
+              </div>
+
+              <!-- <input type="submit" id="submitBtn" value="Create" /> -->
+              <button class="save-btn" type="submit" id="submitBtn" value="create">Create</button>
+               
+
+                <script>
+                  save_btn = document.querySelector('.save-btn');
+                  save_btn.onclick = function(){
+                    this.innerHTML=" <div class='loader'></div>"
+                 setTimeout(() =>{
+                  this.innerHTML = "Blog created";
+                  this.style = "background: #f3f3f3; color: #333; color:  pointer-events: none";
+                 }, 13000);
+                  }
+                </script>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.3.3/dist/axios.min.js"></script>
+    <script src="./JS/newblog.js"></script>
+    <script>
+     
+
+
+     const submitss = () => {
+      console.log('submissiom')
+    const user = JSON.parse(localStorage.getItem("tempLog"))
+
+    var title = document.getElementById('title').value;
+    var body = document.getElementById('body').value;
+    var image = document.getElementById('photo');
+
+    if (!title || !image || !body) {
+        return false;
+    }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${user.token}`);
+
+    var formdata = new FormData();
+    formdata.append("title", title);
+    formdata.append("body", body);
+    formdata.append("photo", image.files[0]);
+
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+    };
+
+    fetch("https://my-brand-production-1062.up.railway.app/api/blog/add/", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+
+            console.log(result)
+            document.getElementById('title').value = '',
+                document.getElementById('body').value = '',
+                document.getElementById('photo').value = ''
+        })
+        .catch(error => console.log('error', error));
+
+
+
+
+    return false
+
+
+}
+removeData = () => {
+    localStorage.splash('articles');
+};
+
+
+
+
+
+
+
+
+
+
+
+
+      const updateArticle = JSON.parse(localStorage.getItem("updateArticle"));
+
+      console.log("article:", updateArticle);
+
+      //   axios.patch('https://my-brand-production-1062.up.railway.app/api/docs/update/{id}', {
+      //   completed: true
+      // })
+      //   .then(response => {
+      //     console.log(response.data);
+      //     updateArticle=response.data
+
+      //   })
+      if (updateArticle == null) {
+        document
+          .getElementById("newArticles")
+          .addEventListener("submit", (event) => {
+            event.preventDefault();
+          });
+      } else {
+        document.getElementById("cover").style.display = "none";
+        document.getElementById("body").value = updateArticle.body;
+        document.getElementById("title").value = updateArticle.title;
+        document.getElementById("submitBtn").value = "Save Change";
+
+        document
+          .getElementById("newArticles")
+          .addEventListener("submit", (event) => {
+            event.preventDefault();
+            const title = document.getElementById("title").value;
+            const body = document.getElementById("body").value;
+
+            const user = JSON.parse(localStorage.getItem("tempLog"));
+
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", `Bearer ${user.token}`);
+
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+              title,
+              body,
+            });
+
+            var requestOptions = {
+              method: "PATCH",
+              headers: myHeaders,
+              body: raw,
+              redirect: "follow",
+            };
+
+            fetch(
+              `https://my-brand-production-1062.up.railway.app/api/blog/update/${updateArticle.id}`,
+              requestOptions
+            )
+              .then((response) => response.json())
+              .then((result) => {
+                alert("Blog updated successfuly");
+                window.open("./view-blog.html", "_self");
+                
+            localStorage.removeItem("updateArticle");
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          });
+      }
+
+
+       
+
+      // document.getElementById('newArticles').addEventListener('submit',update())
+    </script>
+  </body>
+</html>
